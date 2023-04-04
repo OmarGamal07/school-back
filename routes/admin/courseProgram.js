@@ -44,7 +44,7 @@ router.post(
     const courseProgram = new courseProgramModel({
       name: req.body.name,
       description: req.body.description,
-      image: imgURL + req.file.filename,
+      image: req.file.filename,
     });
     try {
       await courseProgram.save();
@@ -74,9 +74,8 @@ router.patch(
             "../../assets/uploads/courseprogram",
             courseProgram.image
           );
-          console.log(imagePath);
           fs.unlinkSync(imagePath);
-          courseProgram.image = imgURL + req.file.filename;
+          courseProgram.image = req.file.filename;
         }
         courseProgram.name = req.body.name;
         courseProgram.description = req.body.description;
