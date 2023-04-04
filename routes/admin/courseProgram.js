@@ -7,7 +7,7 @@ const admin = require("../../middlewares/admin/admin");
 
 // display all Course Programs---------------------
 
-router.get("/", admin, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const courseProgram = await courseProgramModel.find({});
     res.send(courseProgram);
@@ -28,7 +28,7 @@ router.get("/:id", admin, async (req, res) => {
   }
 });
 
-// add category -----------------------
+// add courseProgram -----------------------
 
 router.post("/", admin, async (req, res) => {
   const courseProgram = new courseProgramModel({
@@ -44,7 +44,7 @@ router.post("/", admin, async (req, res) => {
   }
 });
 
-// update category-----------------------
+// update courseProgram-----------------------
 
 router.patch("/:id", admin, async (req, res) => {
   const id = req.params.id;
@@ -63,7 +63,7 @@ router.patch("/:id", admin, async (req, res) => {
   }
 });
 
-// delete category and her books-----------------------
+// delete courseProgram-----------------------
 
 router.delete("/:id", admin, async (req, res) => {
   const id = req.params.id;
