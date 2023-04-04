@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
 
 // display one lesson -------------
 
-router.get("/:id", admin, async (req, res) => {
+router.get("/:id", async (req, res) => {
   const id = req.params.id;
   try {
     const courseProgram = await courseProgram.findById({ _id: id });
@@ -31,6 +31,9 @@ router.get("/:id", admin, async (req, res) => {
 // add courseProgram -----------------------
 
 router.post("/", admin, async (req, res) => {
+  if (!(req.body.name && req.body.description)) {
+    res.status(400).send("All inputs is required");
+  }
   const courseProgram = new courseProgramModel({
     name: req.body.name,
     description: req.body.description,
