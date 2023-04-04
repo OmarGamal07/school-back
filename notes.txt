@@ -1,0 +1,89 @@
+student -> result -> exam 
+
+student , teacher -> attendance
+
+
+
+exam:{
+	
+	q:[q1,q2,q3];
+	
+}
+
+result :{
+	a:[a1,a2,a3]
+}
+
+subjet:{
+	des:"asda",
+	program:[lesson1,sd]
+}
+
+
+Attendence {
+    StudentId
+    Status
+    Date
+}
+Result{
+    ExamId
+    StudentId
+    CourseId
+    marks
+    student_answer:[]
+}
+Exam{
+    ExamId
+    Date
+    Name
+    Type
+    questions:[]
+}
+Course{
+    CourseId
+    Name
+    Description
+    CourseProgram:[id_program]
+    notes:[{stuid,note}]
+}
+
+
+program{
+id:
+name
+}
+
+homework{
+
+program_id
+questions:[]
+}
+
+resulHomework{
+stu_id
+homework_id
+mark
+ans
+}
+
+
+homework , program 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
