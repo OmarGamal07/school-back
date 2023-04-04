@@ -6,7 +6,6 @@ const courseProgramModel = require("../../models/admin/courseProgram");
 const admin = require("../../middlewares/admin/admin");
 const upload = require("../../middlewares/upload");
 const fs = require("fs");
-const { exit } = require("process");
 require("dotenv").config();
 const imgURL = process.env.imgUrl;
 // display all Course Programs---------------------
