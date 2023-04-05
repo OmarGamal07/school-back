@@ -22,6 +22,10 @@ app.use("/login", loginRouter);
 const courseProgramRoute = require("./routes/admin/courseProgram");
 app.use("/courseprogram", courseProgramRoute);
 
+// attendence routes
+const attendenceRoute = require("./routes/student/attendence");
+app.use("/attendence", attendenceRoute);
+
 mongoose.connect(DB_URL);
 // server connection
 app.listen(PORT, () => {

@@ -4,7 +4,10 @@ const mongoose = require("mongoose");
 const path = require("path");
 const courseProgramModel = require("../../models/admin/courseProgram");
 const admin = require("../../middlewares/admin/admin");
-
+const upload = require("../../middlewares/upload");
+const fs = require("fs");
+require("dotenv").config();
+const imgURL = process.env.imgUrl;
 // display all Course Programs---------------------
 
 router.get("/", async (req, res) => {
@@ -18,7 +21,7 @@ router.get("/", async (req, res) => {
 
 // display one lesson -------------
 
-router.get("/:id", admin, async (req, res) => {
+router.get("/:id", async (req, res) => {
   const id = req.params.id;
   try {
     const courseProgram = await courseProgram.findById({ _id: id });
@@ -30,38 +33,59 @@ router.get("/:id", admin, async (req, res) => {
 
 // add courseProgram -----------------------
 
-router.post("/", admin, async (req, res) => {
-  const courseProgram = new courseProgramModel({
-    name: req.body.name,
-    description: req.body.description,
-    video: req.body.video,
-  });
-  try {
-    await courseProgram.save();
-    res.send(courseProgram);
-  } catch (e) {
-    res.send(e);
+router.post(
+  "/",
+  [admin, upload("courseprogram").single("image")],
+  async (req, res) => {
+    if (!(req.body.name && req.body.description)) {
+      res.status(400).send("All inputs is required");
+    }
+    const courseProgram = new courseProgramModel({
+      name: req.body.name,
+      description: req.body.description,
+      image: req.file.filename,
+    });
+    try {
+      await courseProgram.save();
+      res.send(courseProgram);
+    } catch (e) {
+      res.send(e);
+    }
   }
-});
+);
 
 // update courseProgram-----------------------
 
-router.patch("/:id", admin, async (req, res) => {
-  const id = req.params.id;
-  try {
-    const courseProgram = await courseProgramModel.findById(id);
-    if (!courseProgram) {
-      res.status(404).send("courseProgram not found");
+router.patch(
+  "/:id",
+  [admin, upload("courseprogram").single("image")],
+  async (req, res) => {
+    const id = req.params.id;
+    try {
+      const courseProgram = await courseProgramModel.findById(id);
+      if (!courseProgram) {
+        res.status(404).send("courseProgram not found");
+        console.log(res.statusCode);
+      } else {
+        if (req.file && res.statusCode != 404) {
+          const imagePath = path.join(
+            __dirname,
+            "../../assets/uploads/courseprogram",
+            courseProgram.image
+          );
+          fs.unlinkSync(imagePath);
+          courseProgram.image = req.file.filename;
+        }
+        courseProgram.name = req.body.name;
+        courseProgram.description = req.body.description;
+        await courseProgram.save();
+        res.send(courseProgram);
+      }
+    } catch (e) {
+      res.send(e);
     }
-    courseProgram.name = req.body.name;
-    courseProgram.description = req.body.description;
-    courseProgram.video = req.body.video;
-    await courseProgram.save();
-    res.send(courseProgram);
-  } catch (e) {
-    res.send(e);
   }
-});
+);
 
 // delete courseProgram-----------------------
 
@@ -71,6 +95,14 @@ router.delete("/:id", admin, async (req, res) => {
     const courseProgram = await courseProgramModel.findById({ _id: id });
     if (!courseProgram) {
       res.status(404).send("courseProgram not found");
+    }
+    if (req.file) {
+      const imagePath = path.join(
+        __dirname,
+        "../../assets/uploads/courseprogram",
+        courseProgram.image
+      );
+      fs.unlinkSync(imagePath);
     }
     const deletedcourseProgram = await courseProgramModel.findByIdAndDelete(id);
     res.send(deletedcourseProgram);
