@@ -18,9 +18,8 @@ router.post('/',[admin],async(req,res) =>{
           }
 
         const date = new Date(req.body.Date);
-        //check data > data now
-        if (isNaN(date.getTime())) {
-        return res.status(400).json({ message: 'Invalid date format' });
+        if (isNaN(date.getTime()) || date.getTime() < Date.now()) {
+          return res.status(400).json({ message: 'Invalid date format or date is in the past' });
         }
         // if (!Array.isArray(req.body.courseProgram)) {
         //     return res.status(400).json({ message: 'courseProgram must be an array of ObjectId values' });
