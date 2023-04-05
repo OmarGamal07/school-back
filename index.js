@@ -18,6 +18,10 @@ app.use("/register", registerRouter);
 const loginRouter = require("./routes/auth/login");
 app.use("/login", loginRouter);
 
+//course routes
+const courseRouter = require("./routes/admin/course");
+app.use("/course",courseRouter);
+
 // course program routes
 const courseProgramRoute = require("./routes/admin/courseProgram");
 app.use("/courseprogram", courseProgramRoute);

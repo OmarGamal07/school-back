@@ -6,21 +6,25 @@ const courseModel = require('../../models/teacher/course');
 const examModel = require("../../models/teacher/exam");
 const resultModel = require("../../models/student/result");
 const attendanceModel = require("../../models/student/attendance");
+
+const admin = require("../../middlewares/admin/admin");
+const teacher = require("../../middlewares/teacher/teacher");
 const fs = require('fs');
 const { findById } = require('../../models/teacher/course');
-router.post('/',async(req,res) =>{ 
+router.post('/',[admin],async(req,res) =>{ 
     try {
         if (!req.body.name || !req.body.Date) {
             return res.status(400).json({ message: 'Name and Date are required fields' });
           }
 
         const date = new Date(req.body.Date);
+        //check data > data now
         if (isNaN(date.getTime())) {
         return res.status(400).json({ message: 'Invalid date format' });
         }
-        if (!Array.isArray(req.body.courseProgram)) {
-            return res.status(400).json({ message: 'courseProgram must be an array of ObjectId values' });
-          }
+        // if (!Array.isArray(req.body.courseProgram)) {
+        //     return res.status(400).json({ message: 'courseProgram must be an array of ObjectId values' });
+        //   }
         const objCourse = {
             name: req.body.name,
             description: req.body.description,
@@ -76,7 +80,7 @@ router.get('/:id', async (req, res) => {
 
  //delete all courses 
 
- router.delete('/',async(req,res)=>{
+ router.delete('/',[admin],async(req,res)=>{
     try{
     await Promise.all([
          examModel.deleteMany({}),
@@ -95,7 +99,7 @@ router.get('/:id', async (req, res) => {
 
 
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id',[admin], async (req, res) => {
     try {
       const courseId = req.params.id;
   
@@ -118,7 +122,7 @@ router.delete('/:id', async (req, res) => {
   
 
 
-router.put('/:id',async (req,res)=>{
+router.put('/:id',[admin],async (req,res)=>{
     const id=req.params.id;
     const objCourse = {
         name: req.body.name,
