@@ -42,7 +42,7 @@ router.post("/", [admin], async (req, res) => {
 
 router.get("/", async (req, res) => {
   try {
-    const course = await courseModel.find({});
+    const course = await courseModel.find({}).populate("courseProgram");
     return res.json(course);
   } catch (err) {
     res.status(500).send(err);
