@@ -46,20 +46,31 @@ router.get('/',async(req,res)=>{
     }
 })//get
 
+//get one course by id and display his lessons and notes
+router.get('/:id', async (req, res) => {
+  try {
+    const courseId = req.params.id;
 
-//get course by id
-// router.get('/:id',async(req,res)=>{
+    const course = await courseModel.findById(courseId)
+      .populate({
+        path: 'courseProgram',
+        model: 'courseProgram',
+        select: {name:1,description:1},
+      })
+      .populate({
+        path: 'notes.studentId',
+        select: 'name',
+      });
 
+    if (!course) {
+      return res.status(404).send('Course not found');
+    }
 
-//     const id=req.params.id;
-//     try{
-//        const course = await findById(id);
-//     //    let 
-//    }
-//    catch(err){
-//       res.status(500).send(err);
-//    } 
-//  })//get course by id
+    return res.json(course);
+  } catch (err) {
+    res.status(500).send(err);
+  }
+});
 
 
 
