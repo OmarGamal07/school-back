@@ -7,12 +7,15 @@ const admin = require("../../middlewares/admin/admin");
 const upload = require("../../middlewares/upload");
 const fs = require("fs");
 require("dotenv").config();
+const courseModel = require("../../models/teacher/course");
 const imgURL = process.env.imgUrl;
 // display all Course Programs---------------------
 
 router.get("/", async (req, res) => {
   try {
-    const courseProgram = await courseProgramModel.find({});
+    const courseProgram = await courseProgramModel
+      .find({})
+      .populate("courseId");
     res.send(courseProgram);
   } catch (err) {
     res.send(err);
@@ -24,10 +27,10 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
   try {
-    const courseProgram = await courseProgram.findById({ _id: id });
-    res.send(courseProgram);
+    const courseProgram = await courseProgramModel.findById({ _id: id }).populate("courseId");
+    return res.send(courseProgram);
   } catch (e) {
-    res.send(e);
+    return res.send(e);
   }
 });
 
@@ -43,13 +46,21 @@ router.post(
     const courseProgram = new courseProgramModel({
       name: req.body.name,
       description: req.body.description,
-      image: req.file.filename,
+      // image: req.file.filename,
+      courseId: req.body.courseId,
     });
     try {
       await courseProgram.save();
-      res.send(courseProgram);
+      if (courseProgram) {
+        // await authorModel.updateOne({ _id: book.author }, { $push: { 'books': book._id } });
+        await courseModel.updateOne(
+          { _id: courseProgram.courseId._id },
+          { $push: { courseProgram: courseProgram._id } }
+        );
+      }
+      return res.send(courseProgram);
     } catch (e) {
-      res.send(e);
+      return res.send(e);
     }
   }
 );
@@ -78,11 +89,12 @@ router.patch(
         }
         courseProgram.name = req.body.name;
         courseProgram.description = req.body.description;
+        courseProgram.courseId = req.body.courseId;
         await courseProgram.save();
-        res.send(courseProgram);
+        return res.send(courseProgram);
       }
     } catch (e) {
-      res.send(e);
+      return res.send(e);
     }
   }
 );
@@ -105,9 +117,9 @@ router.delete("/:id", admin, async (req, res) => {
       fs.unlinkSync(imagePath);
     }
     const deletedcourseProgram = await courseProgramModel.findByIdAndDelete(id);
-    res.send(deletedcourseProgram);
+    return res.send(deletedcourseProgram);
   } catch (e) {
-    res.send(e);
+    return res.send(e);
   }
 });
 
