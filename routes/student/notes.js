@@ -4,9 +4,10 @@ require('dotenv').config();
 //model
 const courseModel = require('../../models/teacher/course');
 const student = require("../../middlewares/student/student");
+const teacher = require("../../middlewares/teacher/teacher");
 const studentModel = require('../../models/student/notes');
 const { route } = require('./attendence');
-router.post('/', async (req, res) => {
+router.post('/',[student], async (req, res) => {
     try {
       const { note, courseId, studentId } = req.body;
   
@@ -78,7 +79,7 @@ router.post('/', async (req, res) => {
 //      res.status(500).send(err);
 //  }
 // })
-router.get(':courseId',async(req,res)=>{
+router.get(':courseId',[teacher],async(req,res)=>{
     try {
        const notes = await NoteModel.find({courseId:req.params.courseId},{note:1,studentId:1})
         .populate("studentId");
