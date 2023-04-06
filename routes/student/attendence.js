@@ -88,4 +88,32 @@ router.delete("/:id", [teacher], async (req, res) => {
   }
 });
 
+// display all students attendence ---------------------
+// /attendence/course/courseId
+router.get("/course/:id", [admin], async (req, res) => {
+  try {
+    const id = req.params.id;
+    const attendance = await attendanceModel
+      .find({ courseId: id })
+      .populate("studentId");
+    res.send(attendance);
+  } catch (err) {
+    res.send(err);
+  }
+});
+
+router.get("/student/:id", [admin], async (req, res) => {
+  try {
+    const id = req.params.id;
+    const attendance = await attendanceModel
+      .find({ studentId: id })
+      .populate("studentId");
+    res.send(attendance);
+  } catch (err) {
+    res.send(err);
+  }
+});
+
+
+
 module.exports = router;
