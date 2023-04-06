@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const examSchema = new mongoose.Schema({
-  date: { type: Date, required: true },
-  time: { type: String, required: true },
+  startDate: { type: Date, required: true },
+  endDate: { type: Date, required: true },
   name: { type: String, required: true },
   courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'course' },
   type: {
