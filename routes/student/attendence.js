@@ -95,7 +95,8 @@ router.get("/course/:id", [admin], async (req, res) => {
     const id = req.params.id;
     const attendance = await attendanceModel
       .find({ courseId: id })
-      .populate("studentId");
+      .populate("studentId")
+      .populate("courseId");
     res.send(attendance);
   } catch (err) {
     res.send(err);
@@ -107,13 +108,26 @@ router.get("/student/:id", [admin], async (req, res) => {
     const id = req.params.id;
     const attendance = await attendanceModel
       .find({ studentId: id })
-      .populate("studentId");
+      .populate("studentId")
+      .populate("courseId");
     res.send(attendance);
   } catch (err) {
     res.send(err);
   }
 });
 
-
+router.get("/:courseId/:studentId", [admin], async (req, res) => {
+  try {
+    const courseId = req.params.courseId;
+    const studentId = req.params.studentId;
+    const attendance = await attendanceModel
+      .find({ studentId: studentId, courseId: courseId })
+      .populate("studentId")
+      .populate("courseId");
+    res.send(attendance);
+  } catch (err) {
+    res.send(err);
+  }
+});
 
 module.exports = router;
