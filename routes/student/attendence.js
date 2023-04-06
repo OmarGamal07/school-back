@@ -75,7 +75,7 @@ router.patch("/:id", [teacher], async (req, res) => {
 
 // delete attend for student
 
-router.patch("/:id", [teacher], async (req, res) => {
+router.delete("/:id", [teacher], async (req, res) => {
   const id = req.params.id;
   try {
     const attend = await attendanceModel.findByIdAndDelete(id);
