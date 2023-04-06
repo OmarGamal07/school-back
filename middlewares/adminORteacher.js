@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const TOKEN_KEY = process.env.TOKEN_KEY;
-const UserModel = require("../../models/user");
+const UserModel = require("../models/user");
 const adminOrTeacher = async (req, res, next) => {
   const token = req.headers["x-token"];
 

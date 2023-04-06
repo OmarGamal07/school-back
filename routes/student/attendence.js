@@ -6,10 +6,13 @@ const attendanceModel = require("../../models/student/attendance");
 const auth = require("../../middlewares/auth");
 const admin = require("../../middlewares/admin/admin");
 const teacher = require("../../middlewares/teacher/teacher");
+const student = require("../../middlewares/student/student");
+const adminORteacher = require("../../middlewares/adminORteacher");
+const courseModel = require("../../models/teacher/course");
 
 // display all students attendence ---------------------
 
-router.get("/", [admin], async (req, res) => {
+router.get("/", [adminORteacher], async (req, res) => {
   try {
     const attendance = await attendanceModel.find({}).populate("studentId");
     res.send(attendance);
@@ -20,7 +23,7 @@ router.get("/", [admin], async (req, res) => {
 
 // display attendence by id ---------------------
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", [adminORteacher], async (req, res) => {
   try {
     const id = req.params.id;
     const attendance = await attendanceModel.findById(id).populate("studentId");
@@ -32,26 +35,25 @@ router.get("/:id", async (req, res) => {
 
 // add attendence for student -----------------------
 
-router.post("/", [teacher], async (req, res) => {
-  if (
-    !(
-      req.body.studentId &&
-      req.body.courseId &&
-      req.body.status &&
-      req.body.date
-    )
-  ) {
+router.post("/", [student], async (req, res) => {
+  if (!(req.body.studentId && req.body.courseId && req.body.date)) {
     res.status(400).send("All inputs is required");
   }
   const attend = new attendanceModel({
     studentId: req.body.studentId,
     courseId: req.body.courseId,
-    status: req.body.status,
     date: req.body.date,
+    // status:false,
   });
   try {
-    await attend.save();
-    res.send(attend);
+    const saved = await attend.save();
+    if (saved) {
+      await courseModel.updateOne(
+        { _id: req.body.courseId },
+        { $push: { studentId: req.body.studentId } }
+      );
+    }
+    res.send(saved);
   } catch (e) {
     res.send(e);
   }
@@ -103,18 +105,18 @@ router.get("/course/:id", [admin], async (req, res) => {
   }
 });
 
-router.get("/student/:id", [admin], async (req, res) => {
-  try {
-    const id = req.params.id;
-    const attendance = await attendanceModel
-      .find({ studentId: id })
-      .populate("studentId")
-      .populate("courseId");
-    res.send(attendance);
-  } catch (err) {
-    res.send(err);
-  }
-});
+// router.get("/student/:id", [admin], async (req, res) => {
+//   try {
+//     const id = req.params.id;
+//     const attendance = await attendanceModel
+//       .find({ studentId: id })
+//       .populate("studentId")
+//       .populate("courseId");
+//     res.send(attendance);
+//   } catch (err) {
+//     res.send(err);
+//   }
+// });
 
 router.get("/:courseId/:studentId", [admin], async (req, res) => {
   try {

@@ -20,7 +20,7 @@ app.use("/login", loginRouter);
 
 //course routes
 const courseRouter = require("./routes/admin/course");
-app.use("/course",courseRouter);
+app.use("/course", courseRouter);
 
 // course program routes
 const courseProgramRoute = require("./routes/admin/courseProgram");
@@ -32,6 +32,10 @@ app.use("/attendence", attendenceRoute);
 // notes routes
 const notesRoute = require("./routes/student/notes");
 app.use("/notes", notesRoute);
+// student routes
+const studentRoute = require("./routes/student/student");
+app.use("/student", studentRoute);
+
 mongoose.connect(DB_URL);
 // server connection
 app.listen(PORT, () => {

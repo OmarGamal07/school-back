@@ -27,7 +27,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
   try {
-    const courseProgram = await courseProgramModel.findById({ _id: id }).populate("courseId");
+    const courseProgram = await courseProgram.findById({ _id: id });
     return res.send(courseProgram);
   } catch (e) {
     return res.send(e);
@@ -46,7 +46,7 @@ router.post(
     const courseProgram = new courseProgramModel({
       name: req.body.name,
       description: req.body.description,
-      // image: req.file.filename,
+      image: req.file.filename,
       courseId: req.body.courseId,
     });
     try {
