@@ -17,6 +17,7 @@ router.post("/", async (req, res) => {
       password,
       dateOfBirth,
       confirmPassword,
+      role
     } = req.body;
     if (
       !(
@@ -42,6 +43,7 @@ router.post("/", async (req, res) => {
       password: encryptedPassword,
       confirmPassword: encryptedPassword,
       dateOfBirth,
+      role
     });
     const token = jwt.sign({ user_id: user._id, email }, process.env.TOKEN_KEY);
     user.token = token;

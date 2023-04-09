@@ -5,7 +5,8 @@ require('dotenv').config();
 const courseModel = require('../../models/teacher/course');
 const student = require("../../middlewares/student/student");
 const teacher = require("../../middlewares/teacher/teacher");
-const studentModel = require('../../models/student/notes');
+const studentModel = require('../../models/user');
+const noteModel = require('../../models/student/notes');
 const { route } = require('./attendence');
 router.post('/',[student], async (req, res) => {
     try {
@@ -79,10 +80,12 @@ router.post('/',[student], async (req, res) => {
 //      res.status(500).send(err);
 //  }
 // })
-router.get(':courseId',[teacher],async(req,res)=>{
+
+//get all course's notes
+router.get('/:courseId',[teacher],async(req,res)=>{
     try {
-       const notes = await NoteModel.find({courseId:req.params.courseId},{note:1,studentId:1})
-        .populate("studentId");
+       const notes = await noteModel.find({courseId:req.params.courseId},{note:1,studentId:1})
+        .populate({path:"studentId",model:"user",select:{firstName:1,lastName:1}});
        return res.json(notes);
     } catch(err){
         res.status(500).send(err);

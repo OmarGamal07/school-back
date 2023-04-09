@@ -24,5 +24,29 @@ router.patch("/enroll/:courseId/:studentId", [student], async (req, res) => {
     return res.send(e);
   }
 });
+// /student/cancel/:courseId/:studentId
+router.patch("/cancel/:courseId/:studentId", [student], async (req, res) => {
+  try {
+    const courseId = req.params.courseId;
+    const studentId = req.params.studentId;
+    const enroll = await courseModel.updateOne(
+      { _id: courseId },
+      { $pull: { studentId: studentId } }
+    );
+    return res.send(enroll);
+  } catch (e) {
+    return res.send(e);
+  }
+});
 
+
+router.get("/:studentId", [student], async (req, res) => {
+  try {
+    const studentId = req.params.studentId;
+    const student = await studentModel.findById(studentId);
+    return res.send(student);
+  } catch (e) {
+    return res.send(e);
+  }
+});
 module.exports = router;

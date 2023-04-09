@@ -35,7 +35,9 @@ app.use("/notes", notesRoute);
 // student routes
 const studentRoute = require("./routes/student/student");
 app.use("/student", studentRoute);
-
+// teacher routes
+const teacherRoute = require("./routes/teacher/teacher");
+app.use("/teacher", teacherRoute);
 mongoose.connect(DB_URL);
 // server connection
 app.listen(PORT, () => {

@@ -46,7 +46,7 @@ router.post(
     const courseProgram = new courseProgramModel({
       name: req.body.name,
       description: req.body.description,
-      image: req.file.filename,
+      // image: req.file.filename,
       courseId: req.body.courseId,
     });
     try {
@@ -58,7 +58,7 @@ router.post(
           { $push: { courseProgram: courseProgram._id } }
         );
       }
-      return res.send(courseProgram);
+      return res.json(courseProgram);
     } catch (e) {
       return res.send(e);
     }

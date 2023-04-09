@@ -15,7 +15,7 @@ const { findById } = require("../../models/teacher/course");
 
 router.post("/", [admin], async (req, res) => {
   try {
-    if (!req.body.name || !req.body.Date) {
+    if (!req.body.name || !req.body.Date || !req.body.teacherId) {
       return res
         .status(400)
         .json({ message: "Name and Date are required fields" });
@@ -43,6 +43,56 @@ router.post("/", [admin], async (req, res) => {
     return res.send(error);
   }
 });
+//get teacher's course
+router.get("/teacher/:teacherid", async (req, res) => {
+  try {
+    const course = await courseModel.find({teacherId:req.params.teacherid}).populate([
+      {
+        path: "courseProgram",
+        model: "courseProgram",
+        select: { name: 1, description: 1 },
+      }
+    ]);
+
+    if (!course) {
+      return res.status(404).send("Course not found");
+    }
+
+    return res.json(course);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err);
+  }
+});
+
+//get student's course
+router.get("/student/:studentid", async (req, res) => {
+  try {
+    const studentId = req.params.studentid;
+    const course = await courseModel.find({studentId:{$in:[studentId]}}).populate([
+      {
+        path: "courseProgram",
+        model: "courseProgram",
+        select: { name: 1, description: 1 },
+      },
+      {
+        path:"teacherId",
+        model:"user",  
+        select:{firstName:1,lastName:1} 
+      }
+    ]);
+
+    if (!course) {
+      return res.status(404).send("Course not found");
+    }
+
+    return res.json(course);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err);
+  }
+});
+
 
 router.get("/", async (req, res) => {
   try {
@@ -66,6 +116,16 @@ router.get("/:id", async (req, res) => {
         model: "courseProgram",
         select: { name: 1, description: 1 },
       },
+      {
+        path:"teacherId",
+        model:"user",   
+        select:{firstName:1,lastName:1}
+      },
+      {
+        path:"studentId",
+        model:"user",
+        select:{firstName:1,lastName:1}
+      }
     ]);
 
     if (!course) {
