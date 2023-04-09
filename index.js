@@ -38,6 +38,10 @@ app.use("/student", studentRoute);
 // teacher routes
 const teacherRoute = require("./routes/teacher/teacher");
 app.use("/teacher", teacherRoute);
+// exam routes
+const examRoute = require("./routes/teacher/exam");
+app.use("/exam", examRoute);
+
 mongoose.connect(DB_URL);
 // server connection
 app.listen(PORT, () => {
