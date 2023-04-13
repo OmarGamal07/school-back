@@ -9,9 +9,11 @@ const student = require("../../middlewares/student/student");
 const upload = require("../../middlewares/upload");
 const courseModel = require("../../models/teacher/course");
 const fs = require("fs");
+const admin = require("../../middlewares/student/student");
+const adminOrTeacher = require("../../middlewares/adminORteacher");
 
 // get all homeworks
-router.get("/", [auth], async (req, res) => {
+router.get("/", [admin], async (req, res) => {
   try {
     const homeowrk = await homeworkModel
       .find({})
@@ -38,7 +40,7 @@ router.get("/:id", [auth], async (req, res) => {
 });
 
 // get homeowrk by course id
-router.get("/courseProgram/:id", [auth], async (req, res) => {
+router.get("/courseProgram/:id", [adminOrTeacher], async (req, res) => {
   try {
     const id = req.params.id;
     const homeowrk = await homeworkModel
