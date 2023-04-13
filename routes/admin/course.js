@@ -15,7 +15,8 @@ const { findById } = require("../../models/teacher/course");
 
 router.post("/", [admin], async (req, res) => {
   try {
-    if (!req.body.name || !req.body.Date || !req.body.teacherId) {
+    // || !req.body.teacherId
+    if (!req.body.name || !req.body.Date ) {
       return res
         .status(400)
         .json({ message: "Name and Date are required fields" });

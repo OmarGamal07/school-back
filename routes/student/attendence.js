@@ -37,7 +37,7 @@ router.get("/:id", [adminORteacher], async (req, res) => {
 
 router.post("/", [student], async (req, res) => {
   if (!(req.body.studentId && req.body.courseId && req.body.date)) {
-    res.status(400).send("All inputs is required");
+    return res.status(400).send("All inputs is required");
   }
   const attend = new attendanceModel({
     studentId: req.body.studentId,

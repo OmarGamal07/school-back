@@ -16,8 +16,9 @@ router.post("/", async (req, res) => {
 
     const user = await User.findOne({ email });
     if (user && (await bcrypt.compare(password, user.password))) {
-      // const token = jwt.sign({ user_id: user._id, email }, TOKEN_KEY);
+
       const token = jwt.sign({ role: user.role, user_id: user._id, email }, TOKEN_KEY);
+
       user.token = token;
       return res.status(200).json(user);
     }

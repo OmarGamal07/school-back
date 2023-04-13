@@ -1,41 +1,30 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const examSchema = new mongoose.Schema({
-  startDate: { type: Date, required: true },
-  endDate: { type: Date, required: true },
+  startDate: { type: Date },
+  endDate: { type:Date },
   name: { type: String, required: true },
-  courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'course' },
-  type: {
+  courseId: { type: mongoose.Schema.Types.ObjectId, ref: "course" },
+  type: { 
     type: String,
     enum: ["mcq", "true_false", "classic"],
-    required:true
+    required: true,
   },
-  // questions: [
-//     {question:{ type: String, required: true }},
-//     {
-//       answers: { 
-//       type: [String],
-//       required:()=>{
-//         return this.type == 'mcq';
-//     }
-//   }
-// },
-// {
-//   correctAnswer:{type:String}
-// }
 
-questions:[
-  {
-  question:{ type: String, required: true },
-  answers: [
-    { 
-      type:String,
-      required:()=>{
-        return this.type == 'mcq';
-    }
-  }],
-      correctAnswer:{type:String,required:true}
-  }]
+  questions: [
+    {
+      question: { type: String, required: true },
+      answers: [
+        {
+          type: String,
+          required: function () {
+            return this.type == "mcq";
+          },
+        },
+      ],
+      correctAnswer: { type: String,default:"" },
+    },
+  ],
 });
 
-module.exports = mongoose.model('exam', examSchema);
+module.exports = mongoose.model("exam", examSchema);
