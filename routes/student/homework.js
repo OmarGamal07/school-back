@@ -9,7 +9,7 @@ const student = require("../../middlewares/student/student");
 const upload = require("../../middlewares/upload");
 const courseModel = require("../../models/teacher/course");
 const fs = require("fs");
-const admin = require("../../middlewares/student/student");
+const admin = require("../../middlewares/admin/admin");
 const adminOrTeacher = require("../../middlewares/adminORteacher");
 
 // get all homeworks
@@ -18,7 +18,7 @@ router.get("/", [admin], async (req, res) => {
     const homeowrk = await homeworkModel
       .find({})
       .populate("studentId")
-      .populate("courseId");
+      .populate("courseProgramId");
     res.send(homeowrk);
   } catch (err) {
     res.send(err);
@@ -109,14 +109,14 @@ router.delete("/:id", auth, async (req, res) => {
     if (!homework) {
       res.status(404).send("homework not found");
     }
-    if (req.file) {
-      const filePath = path.join(
-        __dirname,
-        "../../assets/uploads/homework",
-        homework.file
-      );
-      fs.unlinkSync(filePath);
-    }
+
+    const filePath = path.join(
+      __dirname,
+      "../../assets/uploads/homework",
+      homework.file
+    );
+    fs.unlinkSync(filePath);
+    console.log(filePath);
     const deletedHomework = await homeworkModel.findByIdAndDelete(id);
     return res.send(deletedHomework);
   } catch (e) {
