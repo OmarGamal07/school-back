@@ -6,6 +6,7 @@ const courseModel = require("../../models/teacher/course");
 const examModel = require("../../models/teacher/exam");
 const student = require("../../middlewares/student/student");
 const teacherModel = require("../../models/user");
+
 const fs = require("fs");
 const teacher = require("../../middlewares/teacher/teacher");
 const admin = require("../../middlewares/admin/admin");
@@ -17,14 +18,15 @@ router.get("/mangeExam", async (req, res) => {
       $or: [
         { startDate: { $exists: false } }, // Fetch exams without start date
         { endDate: { $exists: false } }, // Fetch exams without end date
-        ]});
+      ],
+    });
     return res.status(200).send(exam);
   } catch (err) {
     res.status(500).send(err);
   }
 });
 // put exam by id
-router.patch("/mangeExam/:id",async (req, res) => {
+router.patch("/mangeExam/:id", async (req, res) => {
   try {
     // const endDateISO = req.body.endDate; // Replace with the value received from front-end
     // const endDate = moment.utc(endDateISO); // Create a moment object in UTC time zone
@@ -36,7 +38,7 @@ const objdate = {
 // console.log(req.body.startDate);
 // console.log(endDateLocal.format());
     const examid = req.params.id;
-    const exam = await examModel.updateOne({_id:examid},{$set:objdate});
+    const exam = await examModel.updateOne({ _id: examid }, { $set: objdate });
     if (!exam) {
       return res.status(404).send("There is no exam with id " + id);
     }
@@ -62,7 +64,7 @@ router.delete("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const courseid = req.params.id;
-    const exam = await examModel.findOne({courseId:courseid});
+    const exam = await examModel.findOne({ courseId: courseid });
     if (!exam) {
       return res.status(404).send("There is no exam with id " + id);
     }
@@ -73,10 +75,13 @@ router.get("/:id", async (req, res) => {
 });
 
 // put exam by courseid
-router.put("/:id",async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const courseid = req.params.id;
-    const exam = await examModel.updateOne({courseId:courseid},{$set:req.body});
+    const exam = await examModel.updateOne(
+      { courseId: courseid },
+      { $set: req.body }
+    );
     if (!exam) {
       return res.status(404).send("There is no exam with id " + id);
     }
@@ -87,7 +92,7 @@ router.put("/:id",async (req, res) => {
 });
 
 // create exam
-router.post("/",async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     if (
       !(
@@ -159,6 +164,5 @@ router.get("/", async (req, res) => {
     res.status(500).send(err);
   }
 });
-
 
 module.exports = router;

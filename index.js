@@ -41,6 +41,9 @@ app.use("/teacher", teacherRoute);
 // exam routes
 const examRoute = require("./routes/teacher/exam");
 app.use("/exam", examRoute);
+// homework routes
+const homeworkRoute = require("./routes/student/homework");
+app.use("/homework", homeworkRoute);
 
 mongoose.connect(DB_URL);
 // server connection
