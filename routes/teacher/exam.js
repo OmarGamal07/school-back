@@ -10,6 +10,7 @@ const fs = require("fs");
 const teacher = require("../../middlewares/teacher/teacher");
 const admin = require("../../middlewares/admin/admin");
 const moment = require('moment');
+const { log } = require("console");
 router.get("/mangeExam", async (req, res) => {
   try {
     const exam = await examModel.find({
@@ -25,13 +26,14 @@ router.get("/mangeExam", async (req, res) => {
 // put exam by id
 router.patch("/mangeExam/:id",async (req, res) => {
   try {
-    const endDateISO = req.body.endDate; // Replace with the value received from front-end
-    const endDate = moment.utc(endDateISO); // Create a moment object in UTC time zone
-    const endDateLocal = endDate.local(); // Convert to local time zon
+    // const endDateISO = req.body.endDate; // Replace with the value received from front-end
+    // const endDate = moment.utc(endDateISO); // Create a moment object in UTC time zone
+    // const endDateLocal = endDate.local(); // Convert to local time zon
 const objdate = {
   startDate:req.body.startDate,
-  endDate:endDateLocal.format()
+  endDate:req.body.endDate
 }
+// console.log(req.body.startDate);
 // console.log(endDateLocal.format());
     const examid = req.params.id;
     const exam = await examModel.updateOne({_id:examid},{$set:objdate});
@@ -52,6 +54,7 @@ router.delete("/", async (req, res) => {
     }
     return res.status(200).send(exams);
   } catch (err) {
+    console.log(err);
     res.status(500).send(err);
   }
 });
@@ -119,8 +122,40 @@ router.get("/", async (req, res) => {
     if (!exams) {
       return res.status(404).send("There is no exams yet");
     }
-    return res.status(200).send(exams);
+   let resexam=[];
+   for(i=0;i<exams.length;i++){
+    let start=null,end=null;
+    let datePortion=null,starttimeString=null,endtimeString=null;
+    if(exams[i].startDate){
+    const startDateiso = moment.utc(exams[i].startDate); // Create a moment object in UTC time zone
+    const startDateLocal = startDateiso.local(); // Convert to local time zon
+     start=startDateLocal.format()
+     const startdateParts = start.split("T"); // Split the string at "T" to separate the date and time
+      starttimeString = startdateParts[1].substring(0, 5); // Extract the time portion from the resulting array
+    
+     const endDateiso = moment.utc(exams[0].endDate); // Create a moment object in UTC time zone
+    const endDateLocal = endDateiso.local(); // Convert to local time zon
+    end=endDateLocal.format()
+    const enddateParts = end.split("T"); // Split the string at "T" to separate the date and time
+ endtimeString = enddateParts[1].substring(0, 5); // Extract the time portion from the resulting array
+ 
+
+      const dateTimeString = (exams[i].startDate).toISOString(); // The input date-time string
+      datePortion = dateTimeString.split("T")[0]; // Extract the date portion
+  }
+  resexam[i]={
+        _id:exams[i]._id,
+        name:exams[i].name,
+        startTime:starttimeString,
+        endTime:endtimeString,
+        date:datePortion
+    }
+   }
+    
+    console.log(resexam);
+    return res.status(200).send(resexam);
   } catch (err) {
+    console.log(err);
     res.status(500).send(err);
   }
 });

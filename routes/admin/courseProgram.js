@@ -46,7 +46,7 @@ router.post(
     const courseProgram = new courseProgramModel({
       name: req.body.name,
       description: req.body.description,
-      // image: req.file.filename,
+      image: req.file.filename,
       courseId: req.body.courseId,
     });
     try {
