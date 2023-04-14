@@ -16,7 +16,7 @@ const { findById } = require("../../models/teacher/course");
 router.post("/", [admin], async (req, res) => {
   try {
     // || !req.body.teacherId
-    if (!req.body.name || !req.body.Date ) {
+    if (!req.body.name || !req.body.Date) {
       return res
         .status(400)
         .json({ message: "Name and Date are required fields" });
@@ -47,13 +47,15 @@ router.post("/", [admin], async (req, res) => {
 //get teacher's course
 router.get("/teacher/:teacherid", async (req, res) => {
   try {
-    const course = await courseModel.find({teacherId:req.params.teacherid}).populate([
-      {
-        path: "courseProgram",
-        model: "courseProgram",
-        select: { name: 1, description: 1 },
-      }
-    ]);
+    const course = await courseModel
+      .find({ teacherId: req.params.teacherid })
+      .populate([
+        {
+          path: "courseProgram",
+          model: "courseProgram",
+          select: { name: 1, description: 1 },
+        },
+      ]);
 
     if (!course) {
       return res.status(404).send("Course not found");
@@ -70,18 +72,20 @@ router.get("/teacher/:teacherid", async (req, res) => {
 router.get("/student/:studentid", async (req, res) => {
   try {
     const studentId = req.params.studentid;
-    const course = await courseModel.find({studentId:{$in:[studentId]}}).populate([
-      {
-        path: "courseProgram",
-        model: "courseProgram",
-        select: { name: 1, description: 1 },
-      },
-      {
-        path:"teacherId",
-        model:"user",  
-        select:{firstName:1,lastName:1} 
-      }
-    ]);
+    const course = await courseModel
+      .find({ studentId: { $in: [studentId] } })
+      .populate([
+        {
+          path: "courseProgram",
+          model: "courseProgram",
+          select: { name: 1, description: 1 },
+        },
+        {
+          path: "teacherId",
+          model: "user",
+          select: { firstName: 1, lastName: 1 },
+        },
+      ]);
 
     if (!course) {
       return res.status(404).send("Course not found");
@@ -93,7 +97,6 @@ router.get("/student/:studentid", async (req, res) => {
     res.status(500).send(err);
   }
 });
-
 
 router.get("/", async (req, res) => {
   try {
@@ -111,23 +114,26 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const courseId = req.params.id;
-    const course = await courseModel.findById(courseId).populate([
-      {
-        path: "courseProgram",
-        model: "courseProgram",
-        select: { name: 1, description: 1 },
-      },
-      {
-        path:"teacherId",
-        model:"user",   
-        select:{firstName:1,lastName:1}
-      },
-      {
-        path:"studentId",
-        model:"user",
-        select:{firstName:1,lastName:1}
-      }
-    ]);
+    const course = await courseModel
+      .findById(courseId)
+      .populate([
+        {
+          path: "courseProgram",
+          model: "courseProgram",
+          select: { name: 1, description: 1 },
+        },
+        {
+          path: "teacherId",
+          model: "user",
+          select: { firstName: 1, lastName: 1 },
+        },
+        {
+          path: "studentId",
+          model: "user",
+          select: { firstName: 1, lastName: 1 },
+        },
+      ])
+      .populate("notes");
 
     if (!course) {
       return res.status(404).send("Course not found");
