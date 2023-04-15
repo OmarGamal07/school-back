@@ -68,37 +68,33 @@ router.get("/student/:id", [auth], async (req, res) => {
 });
 
 // add homeowrk
-router.post(
-  "/",
-  [auth, upload("homework").single("file")],
-  async (req, res) => {
-    try {
-      console.log(Date.now().toLocaleString());
-      const homework = new homeworkModel({
-        studentId: req.body.studentId,
-        courseProgramId: req.body.courseProgramId,
-        note: req.body.note,
-        file: req.file.filename,
-      });
-      await homework.save();
-      if (homework) {
-        return res.send(homework);
-      } else {
-        if (req.file) {
-          const filePath = path.join(
-            __dirname,
-            "../../assets/uploads/homework",
-            homework.file
-          );
-          fs.unlinkSync(filePath);
-        }
-        return res.status(500);
+router.post("/", [upload("homework").single("file")], async (req, res) => {
+  try {
+    const homework = new homeworkModel({
+      studentId: req.body.studentId,
+      courseProgramId: req.body.courseProgramId,
+      note: req.body.note,
+      file: req.file.filename,
+    });
+    console.log(Date.now().toLocaleString());
+    await homework.save();
+    if (homework) {
+      return res.send(homework);
+    } else {
+      if (req.file) {
+        const filePath = path.join(
+          __dirname,
+          "../../assets/uploads/homework",
+          homework.file
+        );
+        fs.unlinkSync(filePath);
       }
-    } catch (err) {
-      res.send(err);
+      return res.status(500);
     }
+  } catch (err) {
+    res.send(err);
   }
-);
+});
 
 // delete homework-----------------------
 

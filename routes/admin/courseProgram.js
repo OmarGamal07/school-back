@@ -41,30 +41,33 @@ router.post(
   [admin, upload("courseprogram").single("image")],
   async (req, res) => {
     if (!(req.body.name && req.body.description)) {
-      res.status(400).send("All inputs is required");
+      res.status(400).send("All inputs are required");
     }
+    const startDate = new Date(req.body.homework.startDate);
+    const endDate = new Date(req.body.homework.endDate);
     const courseProgram = new courseProgramModel({
       name: req.body.name,
       description: req.body.description,
-      image: req.file.filename,
+      image: req.file ? req.file.filename : "",
       courseId: req.body.courseId,
+      homework: {
+        startDate,
+        endDate,
+        homeworkDescription: req.body.homework.homeworkDescription,
+      },
     });
     try {
       await courseProgram.save();
-      if (courseProgram) {
-        // await authorModel.updateOne({ _id: book.author }, { $push: { 'books': book._id } });
-        await courseModel.updateOne(
-          { _id: courseProgram.courseId._id },
-          { $push: { courseProgram: courseProgram._id } }
-        );
-      }
+      await courseModel.updateOne(
+        { _id: courseProgram.courseId },
+        { $push: { courseProgram: courseProgram._id } }
+      );
       return res.json(courseProgram);
     } catch (e) {
       return res.send(e);
     }
   }
 );
-
 // update courseProgram-----------------------
 
 router.patch(
@@ -90,6 +93,7 @@ router.patch(
         courseProgram.name = req.body.name;
         courseProgram.description = req.body.description;
         courseProgram.courseId = req.body.courseId;
+        courseProgram.homework = req.body.homework;
         await courseProgram.save();
         return res.send(courseProgram);
       }
