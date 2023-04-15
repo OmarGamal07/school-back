@@ -9,6 +9,7 @@ const teacher = require("../../middlewares/teacher/teacher");
 const student = require("../../middlewares/student/student");
 const adminORteacher = require("../../middlewares/adminORteacher");
 const courseModel = require("../../models/teacher/course");
+const {ObjectId} = require("mongodb")
 
 // display all students attendence ---------------------
 
@@ -92,44 +93,28 @@ router.delete("/:id", [teacher], async (req, res) => {
 
 // display all students attendence ---------------------
 // /attendence/course/courseId
-router.get("/course/:id", [admin], async (req, res) => {
+router.get("/course/:id", [teacher], async (req, res) => {
   try {
     const id = req.params.id;
-    const attendance = await attendanceModel
+    const attendances = await attendanceModel
       .find({ courseId: id })
       .populate("studentId")
-      .populate("courseId");
-    res.send(attendance);
+    res.send(attendances);
   } catch (err) {
     res.send(err);
   }
 });
 
-// router.get("/student/:id", [admin], async (req, res) => {
-//   try {
-//     const id = req.params.id;
-//     const attendance = await attendanceModel
-//       .find({ studentId: id })
-//       .populate("studentId")
-//       .populate("courseId");
-//     res.send(attendance);
-//   } catch (err) {
-//     res.send(err);
-//   }
-// });
-
-router.get("/:courseId/:studentId", [admin], async (req, res) => {
+// get attendence for student
+router.get("/:studentId/:courseId",[student], async(req,res) => {
   try {
-    const courseId = req.params.courseId;
-    const studentId = req.params.studentId;
-    const attendance = await attendanceModel
-      .find({ studentId: studentId, courseId: courseId })
-      .populate("studentId")
-      .populate("courseId");
-    res.send(attendance);
-  } catch (err) {
-    res.send(err);
+    const {studentId, courseId} = req.params
+    const attendence = await attendanceModel.findOne({studentId,courseId})
+    .populate("studentId")
+    return res.send(attendence)
+  } catch (error) {
+    return res.send(error)    
   }
-});
+})
 
 module.exports = router;
