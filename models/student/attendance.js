@@ -12,7 +12,7 @@ const attendanceSchema = new mongoose.Schema({
     required: true,
   },
   // teacherId: { type: mongoose.Schema.Types.ObjectId, ref: 'user',required:true },
-  status: { type: Boolean, required: true, default: false },
+  status: { type: Boolean, required: true, default: true },
   date: { type: Date, required: true },
 });
 
