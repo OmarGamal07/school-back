@@ -135,16 +135,16 @@ router.get("/:id", async (req, res) => {
         {
           path: "notes", // Update the path to "notes"
           model: "note", // Update the model to "noteModel"
-          select: { _id: 1 }, // Specify the fields to select
+          select: { _id: 1 ,noteData:1}, // Specify the fields to select
         },
       ])
       if (!course) {
         return res.status(404).send("Course not found");
       }
-      const newnotes = await noteModel.find({ courseId: courseId }, { _id: 1,note:1 }); // Update to select only _id field
+      // const newnotes = await noteModel.find({ courseId: courseId }, { _id: 1,note:1 }); // Update to select only _id field
 
-      // Update the notes field in course object with newnotes array
-      course.notes = newnotes.map(note => ({ noteId: note._id,noteData:note.note }));
+      // // Update the notes field in course object with newnotes array
+      // course.notes = newnotes.map(note => ({ noteId: note._id,noteData:note.note }));
   
       await course.save();
       return res.json(course);
