@@ -5,6 +5,7 @@ const examSchema = new mongoose.Schema({
   endDate: { type:Date },
   name: { type: String, required: true },
   courseId: { type: mongoose.Schema.Types.ObjectId, ref: "course" },
+  studentId: [{ type: mongoose.Schema.Types.ObjectId, ref: "user" }],
   type: { 
     type: String,
     enum: ["mcq", "true_false", "classic"],
