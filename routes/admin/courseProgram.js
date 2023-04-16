@@ -36,38 +36,33 @@ router.get("/:id", async (req, res) => {
 
 // add courseProgram -----------------------
 
-router.post(
-  "/",
-  [admin, upload("courseprogram").single("image")],
-  async (req, res) => {
-    if (!(req.body.name && req.body.description)) {
-      res.status(400).send("All inputs are required");
-    }
-    const startDate = new Date(req.body.homework.startDate);
-    const endDate = new Date(req.body.homework.endDate);
-    const courseProgram = new courseProgramModel({
-      name: req.body.name,
-      description: req.body.description,
-      image: req.file ? req.file.filename : "",
-      courseId: req.body.courseId,
-      homework: {
-        startDate,
-        endDate,
-        homeworkDescription: req.body.homework.homeworkDescription,
-      },
-    });
-    try {
-      await courseProgram.save();
-      await courseModel.updateOne(
-        { _id: courseProgram.courseId },
-        { $push: { courseProgram: courseProgram._id } }
-      );
-      return res.json(courseProgram);
-    } catch (e) {
-      return res.send(e);
-    }
+router.post("/", [admin], async (req, res) => {
+  if (!(req.body.name && req.body.description)) {
+    res.status(400).send("All inputs are required");
   }
-);
+  const startDate = new Date(req.body.homework.startDate);
+  const endDate = new Date(req.body.homework.endDate);
+  const courseProgram = new courseProgramModel({
+    name: req.body.name,
+    description: req.body.description,
+    courseId: req.body.courseId,
+    homework: {
+      startDate,
+      endDate,
+      homeworkDescription: req.body.homework.homeworkDescription,
+    },
+  });
+  try {
+    await courseProgram.save();
+    await courseModel.updateOne(
+      { _id: courseProgram.courseId },
+      { $push: { courseProgram: courseProgram._id } }
+    );
+    return res.json(courseProgram);
+  } catch (e) {
+    return res.send(e);
+  }
+});
 // update courseProgram-----------------------
 
 router.patch(
@@ -111,14 +106,6 @@ router.delete("/:id", admin, async (req, res) => {
     const courseProgram = await courseProgramModel.findById({ _id: id });
     if (!courseProgram) {
       res.status(404).send("courseProgram not found");
-    }
-    if (req.file) {
-      const imagePath = path.join(
-        __dirname,
-        "../../assets/uploads/courseprogram",
-        courseProgram.image
-      );
-      fs.unlinkSync(imagePath);
     }
     const deletedcourseProgram = await courseProgramModel.findByIdAndDelete(id);
     return res.send(deletedcourseProgram);

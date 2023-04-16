@@ -10,7 +10,7 @@ const courseSchema = new mongoose.Schema({
     required: true,
     match: /^[0-9]{4}[-]{1}[0-9]{2}[-]{1}[0-9]{2}$/,
   },
-  image: { type: String },
+  image: { type: String, required: true },
   courseProgram: [
     { type: mongoose.Schema.Types.ObjectId, ref: "courseProgram" },
   ],

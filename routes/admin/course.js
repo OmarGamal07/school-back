@@ -22,10 +22,10 @@ router.post(
     try {
       // || !req.body.teacherId
       // console.log(req.body);
-      if (!req.body.name || !req.body.Date) {
+      if (!req.body.name || !req.body.Date || !req.file) {
         return res
           .status(400)
-          .json({ message: "Name and Date are required fields" });
+          .json({ message: "Name , Date and Image are required fields" });
       }
 
       const date = new Date(req.body.Date);
