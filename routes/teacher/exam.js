@@ -10,7 +10,7 @@ const teacherModel = require("../../models/user");
 const fs = require("fs");
 const teacher = require("../../middlewares/teacher/teacher");
 const admin = require("../../middlewares/admin/admin");
-const moment = require('moment');
+const moment = require("moment");
 const { log } = require("console");
 router.get("/mangeExam", async (req, res) => {
   try {
@@ -28,29 +28,39 @@ router.get("/mangeExam", async (req, res) => {
 // put exam by id
 router.patch("/mangeExam/:id", async (req, res) => {
   try {
-const objdate = {
-  startDate:req.body.startDate,
-  endDate:req.body.endDate
-}
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+    const objdate = {
+      startDate: req.body.startDate,
+      endDate: req.body.endDate,
+    };
+    if (
+      isNaN(startDate.getTime()) ||
+      startDate.getTime() < Date.now() ||
+      endDate.getTime() < startDate.getTime()
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Invalid date format or date is in the past" });
+    }
     const examid = req.params.id;
     const exam = await examModel.updateOne({ _id: examid }, { $set: objdate });
     const examcourse = await examModel.findOne({ _id: examid });
-    const course = await courseModel.find({_id:examcourse.courseId});
-   
-    for(i=0;i<course[0].studentId.length;i++){
+    const course = await courseModel.find({ _id: examcourse.courseId });
+
+    for (i = 0; i < course[0].studentId.length; i++) {
       await examModel.updateOne(
         { _id: examid },
         { $push: { studentId: course[0].studentId[i] } }
       );
     }
-     //  (course.studentId).forEach(async(element) => {
+    //  (course.studentId).forEach(async(element) => {
     //    await examModel.updateOne(
     //     { _id: examid },
     //     { $push: { studentId: element } }
     //   );
     // });
-    
-    
+
     if (!exam) {
       return res.status(404).send("There is no exam with id " + id);
     }
@@ -60,7 +70,6 @@ const objdate = {
     res.status(500).send(err);
   }
 });
-
 
 router.delete("/", async (req, res) => {
   try {
@@ -142,7 +151,7 @@ router.get("/", async (req, res) => {
     if (!exams) {
       return res.status(404).send("There is no exams yet");
     }
-   
+
     return res.status(200).send(exams);
   } catch (err) {
     console.log(err);

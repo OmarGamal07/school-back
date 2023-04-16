@@ -42,6 +42,15 @@ router.post("/", [admin], async (req, res) => {
   }
   const startDate = new Date(req.body.homework.startDate);
   const endDate = new Date(req.body.homework.endDate);
+  if (
+    isNaN(startDate.getTime()) ||
+    startDate.getTime() < Date.now() ||
+    endDate.getTime() < startDate.getTime()
+  ) {
+    return res
+      .status(400)
+      .json({ message: "Invalid date format or date is in the past" });
+  }
   const courseProgram = new courseProgramModel({
     name: req.body.name,
     description: req.body.description,
