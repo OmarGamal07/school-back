@@ -91,7 +91,8 @@ router.get("/:studentId", async (req, res) => {
         name:exams[i].name,
         startTime:starttimeString,
         endTime:endtimeString,
-        date:datePortion
+        date:datePortion,
+        courseId:exams[i].courseId
     }
    }
     

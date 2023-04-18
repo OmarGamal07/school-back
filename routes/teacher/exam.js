@@ -34,15 +34,15 @@ router.patch("/mangeExam/:id", async (req, res) => {
       startDate: req.body.startDate,
       endDate: req.body.endDate,
     };
-    if (
-      isNaN(startDate.getTime()) ||
-      startDate.getTime() < Date.now() ||
-      endDate.getTime() < startDate.getTime()
-    ) {
-      return res
-        .status(400)
-        .json({ message: "Invalid date format or date is in the past" });
-    }
+    // if (
+    //   isNaN(startDate.getTime()) ||
+    //   startDate.getTime() <= Date.now() ||
+    //   endDate.getTime() <= startDate.getTime()
+    // ) {
+    //   return res
+    //     .status(400)
+    //     .json({ message: "Invalid date format or date is in the past" });
+    // }
     const examid = req.params.id;
     const exam = await examModel.updateOne({ _id: examid }, { $set: objdate });
     const examcourse = await examModel.findOne({ _id: examid });
@@ -62,7 +62,7 @@ router.patch("/mangeExam/:id", async (req, res) => {
     // });
 
     if (!exam) {
-      return res.status(404).send("There is no exam with id " + id);
+      return res.status(404).send("There is no exam with id " + examid);
     }
     return res.status(200).send(exam);
   } catch (err) {
@@ -83,15 +83,34 @@ router.delete("/", async (req, res) => {
     res.status(500).send(err);
   }
 });
+// get exam by courseid
+router.get("/mangeExam/:id", async (req, res) => {
+  try {
+    const courseid = req.params.id;
+    const course = await examModel.findOne({ courseId: courseid });
+    if (!course) {
+      return res.status(404).send("There is no exam with id " + courseid);
+    }
+    return res.status(200).send(course);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err);
+  }
+});
 // get exam by id
 router.get("/:id", async (req, res) => {
   try {
     const examid = req.params.id;
-    const exam = await examModel.findOne({ _id: examid });
+    const exam = await examModel.findOne({ _id: examid }).populate([
+      {
+        path: "courseId",
+        model: "Course",
+      },
+    ]);
     if (!exam) {
-      return res.status(404).send("There is no exam with id " + id);
+      return res.status(404).send("There is no exam with id " + examid);
     }
-    return res.status(200).send(exam.questions);
+    return res.status(200).send(exam);
   } catch (err) {
     console.log(err);
     res.status(500).send(err);

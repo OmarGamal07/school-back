@@ -24,6 +24,7 @@ const examSchema = new mongoose.Schema({
         },
       ],
       correctAnswer: { type: String,default:"" },
+      grade:{type:Number,default:1}
     },
   ],
 });
