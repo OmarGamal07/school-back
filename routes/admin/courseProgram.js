@@ -74,38 +74,25 @@ router.post("/", [admin], async (req, res) => {
 });
 // update courseProgram-----------------------
 
-router.patch(
-  "/:id",
-  [admin, upload("courseprogram").single("image")],
-  async (req, res) => {
-    const id = req.params.id;
-    try {
-      const courseProgram = await courseProgramModel.findById(id);
-      if (!courseProgram) {
-        res.status(404).send("courseProgram not found");
-        console.log(res.statusCode);
-      } else {
-        if (req.file && res.statusCode != 404) {
-          const imagePath = path.join(
-            __dirname,
-            "../../assets/uploads/courseprogram",
-            courseProgram.image
-          );
-          fs.unlinkSync(imagePath);
-          courseProgram.image = req.file.filename;
-        }
-        courseProgram.name = req.body.name;
-        courseProgram.description = req.body.description;
-        courseProgram.courseId = req.body.courseId;
-        courseProgram.homework = req.body.homework;
-        await courseProgram.save();
-        return res.send(courseProgram);
-      }
-    } catch (e) {
-      return res.send(e);
+router.patch("/:id", [admin], async (req, res) => {
+  const id = req.params.id;
+  try {
+    const courseProgram = await courseProgramModel.findById(id);
+    if (!courseProgram) {
+      res.status(404).send("courseProgram not found");
+      console.log(res.statusCode);
+    } else {
+      courseProgram.name = req.body.name;
+      courseProgram.description = req.body.description;
+      courseProgram.courseId = req.body.courseId;
+      courseProgram.homework = req.body.homework;
+      await courseProgram.save();
+      return res.send(courseProgram);
     }
+  } catch (e) {
+    return res.send(e);
   }
-);
+});
 
 // delete courseProgram-----------------------
 
