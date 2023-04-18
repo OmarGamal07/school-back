@@ -12,14 +12,17 @@ const admin = require("../../middlewares/admin/admin");
 const teacher = require("../../middlewares/teacher/teacher");
 const fs = require("fs");
 const { findById } = require("../../models/teacher/course");
+const upload = require("../../middlewares/upload");
+const path = require("path");
 
 router.post("/", [admin], async (req, res) => {
   try {
     // || !req.body.teacherId
+    // console.log(req.body);
     if (!req.body.name || !req.body.Date) {
       return res
         .status(400)
-        .json({ message: "Name and Date are required fields" });
+        .json({ message: "Name , Date and Image are required fields" });
     }
 
     const date = new Date(req.body.Date);
@@ -36,6 +39,7 @@ router.post("/", [admin], async (req, res) => {
       description: req.body.description,
       Date: req.body.Date,
       courseProgram: req.body.courseProgram,
+      // image: req.file ? req.file.filename : "",
       teacherId: req.body.teacherId,
     };
     const course = await courseModel.create(objCourse);
@@ -114,40 +118,38 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const courseId = req.params.id;
-    const course = await courseModel
-      .findById(courseId)
-      .populate([
-        {
-          path: "courseProgram",
-          model: "courseProgram",
-          select: { name: 1, description: 1 },
-        },
-        {
-          path: "teacherId",
-          model: "user",
-          select: { firstName: 1, lastName: 1 },
-        },
-        {
-          path: "studentId",
-          model: "user",
-          select: { firstName: 1, lastName: 1 },
-        },
-        {
-          path: "notes", // Update the path to "notes"
-          model: "note", // Update the model to "noteModel"
-          select: { _id: 1 ,noteData:1}, // Specify the fields to select
-        },
-      ])
-      if (!course) {
-        return res.status(404).send("Course not found");
-      }
-      // const newnotes = await noteModel.find({ courseId: courseId }, { _id: 1,note:1 }); // Update to select only _id field
+    const course = await courseModel.findById(courseId).populate([
+      {
+        path: "courseProgram",
+        model: "courseProgram",
+        select: { name: 1, description: 1 },
+      },
+      {
+        path: "teacherId",
+        model: "user",
+        select: { firstName: 1, lastName: 1 },
+      },
+      {
+        path: "studentId",
+        model: "user",
+        select: { firstName: 1, lastName: 1 },
+      },
+      {
+        path: "notes", // Update the path to "notes"
+        model: "note", // Update the model to "noteModel"
+        select: { _id: 1, noteData: 1 }, // Specify the fields to select
+      },
+    ]);
+    if (!course) {
+      return res.status(404).send("Course not found");
+    }
+    // const newnotes = await noteModel.find({ courseId: courseId }, { _id: 1,note:1 }); // Update to select only _id field
 
-      // // Update the notes field in course object with newnotes array
-      // course.notes = newnotes.map(note => ({ noteId: note._id,noteData:note.note }));
-  
-      await course.save();
-      return res.json(course);
+    // // Update the notes field in course object with newnotes array
+    // course.notes = newnotes.map(note => ({ noteId: note._id,noteData:note.note }));
+
+    await course.save();
+    return res.json(course);
   } catch (err) {
     console.log(err);
     res.status(500).send(err);

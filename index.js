@@ -17,6 +17,9 @@ const registerRouter = require("./routes/auth/register");
 app.use("/register", registerRouter);
 const loginRouter = require("./routes/auth/login");
 app.use("/login", loginRouter);
+// profile
+const profileRouter = require("./routes/auth/profile");
+app.use("/profile", profileRouter);
 
 //course routes
 const courseRouter = require("./routes/admin/course");
@@ -44,6 +47,10 @@ app.use("/exam", examRoute);
 // homework routes
 const homeworkRoute = require("./routes/student/homework");
 app.use("/homework", homeworkRoute);
+// result routes
+const resultRoute = require("./routes/student/result");
+app.use("/result", resultRoute);
+
 
 mongoose.connect(DB_URL);
 // server connection
