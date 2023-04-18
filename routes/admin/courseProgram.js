@@ -76,7 +76,7 @@ router.post("/", [admin], async (req, res) => {
 
 router.patch(
   "/:id",
-  [admin, upload("courseprogram").single("image")],
+  [admin],
   async (req, res) => {
     const id = req.params.id;
     try {
@@ -85,15 +85,7 @@ router.patch(
         res.status(404).send("courseProgram not found");
         console.log(res.statusCode);
       } else {
-        if (req.file && res.statusCode != 404) {
-          const imagePath = path.join(
-            __dirname,
-            "../../assets/uploads/courseprogram",
-            courseProgram.image
-          );
-          fs.unlinkSync(imagePath);
-          courseProgram.image = req.file.filename;
-        }
+        
         courseProgram.name = req.body.name;
         courseProgram.description = req.body.description;
         courseProgram.courseId = req.body.courseId;

@@ -15,7 +15,7 @@ const { findById } = require("../../models/teacher/course");
 const upload = require("../../middlewares/upload");
 const path = require("path");
 
-router.post("/", [admin], async (req, res) => {
+router.post("/", [admin,upload('Course').single('image')], async (req, res) => {
   try {
     // || !req.body.teacherId
     // console.log(req.body);
@@ -39,7 +39,7 @@ router.post("/", [admin], async (req, res) => {
       description: req.body.description,
       Date: req.body.Date,
       courseProgram: req.body.courseProgram,
-      // image: req.file ? req.file.filename : "",
+      image: req.file ? req.file.filename : "",
       teacherId: req.body.teacherId,
     };
     const course = await courseModel.create(objCourse);

@@ -11,6 +11,8 @@ const student = require("../../middlewares/student/student");
 const teacherModel = require("../../models/user");
 const fs = require("fs");
 
+
+
 router.get("/", async (req, res) => {
     try {
       const teacherId = req.params.teacherId;
@@ -20,4 +22,5 @@ router.get("/", async (req, res) => {
       return res.send(e);
     }
   });
+  
   module.exports = router;

@@ -82,7 +82,7 @@ router.post('/',[student], async (req, res) => {
 // })
 
 //get all course's notes
-router.get('/:courseId',[teacher],async(req,res)=>{
+router.get('/:courseId',async(req,res)=>{
     try {
        const notes = await noteModel.find({courseId:req.params.courseId},{note:1,studentId:1})
         .populate({path:"studentId",model:"user",select:{firstName:1,lastName:1}});
