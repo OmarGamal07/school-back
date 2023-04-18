@@ -95,9 +95,10 @@ router.patch(
       }
     } catch (e) {
       return res.send(e);
+
     }
-  }
-);
+
+});
 
 // delete courseProgram-----------------------
 
