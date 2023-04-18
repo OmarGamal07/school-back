@@ -22,7 +22,7 @@ router.post(
     try {
       // || !req.body.teacherId
       // console.log(req.body);
-      if (!req.body.name || !req.body.Date) {
+      if (!req.body.name || !req.body.Date || !req.file) {
         return res
           .status(400)
           .json({ message: "Name , Date and Image are required fields" });
@@ -42,7 +42,7 @@ router.post(
         description: req.body.description,
         Date: req.body.Date,
         courseProgram: req.body.courseProgram,
-        image: req.file ? req.file.filename : "",
+        image: req.file.filename,
         teacherId: req.body.teacherId,
       };
       const course = await courseModel.create(objCourse);
@@ -201,46 +201,50 @@ router.delete("/:id", [admin], async (req, res) => {
   }
 });
 
-router.put("/:id", [admin,upload('course').single('image')], async (req, res) => {
-  const id = req.params.id;
-  if (!req.body.name || !req.body.Date) {
-    return res
-      .status(400)
-      .json({ message: "Name and Date are required fields" });
-  }
-
-  const date = new Date(req.body.Date);
-  if (isNaN(date.getTime()) || date.getTime() < Date.now()) {
-    return res
-      .status(400)
-      .json({ message: "Invalid date format or date is in the past" });
-  }
-  const objCourse = {
-    name: req.body.name,
-    description: req.body.description,
-    Date: req.body.Date,
-  };
-  if (req.file && res.statusCode != 404) {
-    const imagePath = path.join(
-      __dirname,
-      "../../assets/uploads/course",
-      objCourse.image
-    );
-    fs.unlinkSync(imagePath);
-    objCourse.image = req.file.filename;
-  }
-  try {
-    const course = await courseModel.updateOne(
-      { _id: id },
-      { $set: objCourse }
-    );
-    if (!course) {
-      return res.status(404).send("Course not found");
+router.put(
+  "/:id",
+  [admin, upload("course").single("image")],
+  async (req, res) => {
+    const id = req.params.id;
+    if (!req.body.name || !req.body.Date) {
+      return res
+        .status(400)
+        .json({ message: "Name and Date are required fields" });
     }
-    return res.json(course);
-  } catch (err) {
-    res.status(500).send(err);
+
+    const date = new Date(req.body.Date);
+    if (isNaN(date.getTime()) || date.getTime() < Date.now()) {
+      return res
+        .status(400)
+        .json({ message: "Invalid date format or date is in the past" });
+    }
+    const objCourse = {
+      name: req.body.name,
+      description: req.body.description,
+      Date: req.body.Date,
+    };
+    if (req.file && res.statusCode != 404) {
+      const imagePath = path.join(
+        __dirname,
+        "../../assets/uploads/course",
+        objCourse.image
+      );
+      fs.unlinkSync(imagePath);
+      objCourse.image = req.file.filename;
+    }
+    try {
+      const course = await courseModel.updateOne(
+        { _id: id },
+        { $set: objCourse }
+      );
+      if (!course) {
+        return res.status(404).send("Course not found");
+      }
+      return res.json(course);
+    } catch (err) {
+      res.status(500).send(err);
+    }
   }
-});
+);
 
 module.exports = router;
