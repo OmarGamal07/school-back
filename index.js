@@ -35,6 +35,9 @@ app.use("/attendence", attendenceRoute);
 // notes routes
 const notesRoute = require("./routes/student/notes");
 app.use("/notes", notesRoute);
+// admin routes
+const adminRoute = require("./routes/admin/admin");
+app.use("/admin", adminRoute);
 // student routes
 const studentRoute = require("./routes/student/student");
 app.use("/student", studentRoute);

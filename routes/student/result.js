@@ -54,7 +54,19 @@ router.post('/', async (req, res) => {
 
 router.get('/',async(req,res)=>{
     try {
-        const  result =await resultModel.find({});
+        const  result =await resultModel.find({})
+        .populate([
+          {
+            path: "courseId",
+            model: "Course",
+            select: { name: 1},
+          },
+          {
+            path: "studentId",
+            model: "user",
+            select: { firstName: 1, lastName: 1 },
+          },
+        ]).sort({ courseId: 1 });
        return res.json(result);
     } catch(err){
         console.log(err);
@@ -70,4 +82,5 @@ router.get('/',async(req,res)=>{
         res.status(500).send(err);
     }
    })
+ 
   module.exports = router;
