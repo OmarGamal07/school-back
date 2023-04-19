@@ -22,6 +22,19 @@ router.get("/", async (req, res) => {
   }
 });
 
+// display all Course Programs of a specifi course---------------------
+router.get("/:courseId", async (req, res) => {
+  try {
+    const {courseId} = req.params
+    const courseProgram = await courseProgramModel
+      .find({courseId})
+      .populate("courseId");
+    res.send(courseProgram);
+  } catch (err) {
+    res.send(err);
+  }
+});
+
 // display one lesson -------------
 
 router.get("/:id", async (req, res) => {
