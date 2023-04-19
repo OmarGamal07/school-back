@@ -13,7 +13,7 @@ const admin = require("../../middlewares/admin/admin");
 const adminOrTeacher = require("../../middlewares/adminORteacher");
 
 // get all homeworks
-router.get("/", [admin], async (req, res) => {
+router.get("/", [teacher], async (req, res) => {
   try {
     const homeowrk = await homeworkModel
       .find({})
@@ -23,6 +23,14 @@ router.get("/", [admin], async (req, res) => {
   } catch (err) {
     res.send(err);
   }
+});
+router.get("/file/:filename", (req, res) => {
+  const filename = req.params.filename;
+  const filepath = path.join(
+    __dirname,
+    `../../assets/uploads/homework/${filename}`
+  );
+  res.download(filepath);
 });
 
 // get homeowrk by id

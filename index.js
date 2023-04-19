@@ -53,7 +53,9 @@ app.use("/homework", homeworkRoute);
 // result routes
 const resultRoute = require("./routes/student/result");
 app.use("/result", resultRoute);
-
+// homeworkResult routes
+const homeworkResultRoute = require("./routes/student/homeworkResult");
+app.use("/hresult", homeworkResultRoute);
 
 mongoose.connect(DB_URL);
 // server connection
