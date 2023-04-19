@@ -109,7 +109,7 @@ router.get("/", async (req, res) => {
   try {
     const course = await courseModel.find(
       {},
-      { name: 1, description: 1, Date: 1 }
+      { name: 1, description: 1, Date: 1 , image: 1}
     );
     return res.json(course);
   } catch (err) {
