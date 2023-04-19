@@ -51,7 +51,27 @@ router.post('/', async (req, res) => {
       res.status(500).json({ message: 'Server error' });
     }
   });
-
+  router.get('/:id',async(req,res)=>{
+    try {
+        const  result =await resultModel.find({_id:req.params.id})
+        .populate([
+          {
+            path: "courseId",
+            model: "Course",
+            select: { name: 1},
+          },
+          {
+            path: "studentId",
+            model: "user",
+            select: { firstName: 1, lastName: 1 },
+          },
+        ]).sort({ courseId: 1 });
+       return res.json(result);
+    } catch(err){
+        console.log(err);
+        res.status(500).send(err);
+    }
+   })
 router.get('/',async(req,res)=>{
     try {
         const  result =await resultModel.find({})
@@ -83,4 +103,25 @@ router.get('/',async(req,res)=>{
     }
    })
  
+// put result by id
+router.patch("/:resultid", async (req, res) => {
+  try {
+    const newResult = req.body.result;
+    const resultid = req.params.resultid;
+    const objres = {
+      result: newResult,
+    };
+    const result = await resultModel.updateOne({ _id: resultid }, { $set: objres });
+   
+
+    if (!result) {
+      return res.status(404).send("There is no result with id " + resultid);
+    }
+    return res.status(200).send(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send(err);
+  }
+});
+
   module.exports = router;

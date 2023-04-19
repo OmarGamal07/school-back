@@ -9,7 +9,8 @@ const resultSchema = new mongoose.Schema({
   isClassic:{type:Boolean,default:false},
   studentAnswer: [{ 
     question:{type:String,required:true},
-    answer:{type:String}
+    answer:{type:String},
+    grade:{type:Number}
    }],
 });
 
